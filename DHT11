@@ -1,0 +1,183 @@
+#include "DHT.h"
+#define DHTPIN 32    
+#define DHTTYPE DHT11   
+DHT dht(DHTPIN, DHTTYPE);
+int mid=25 ;
+int Ha=1;
+void setup() {
+  pinMode(33,OUTPUT);
+  pinMode(27,INPUT_PULLUP);
+  pinMode(17,INPUT_PULLUP);
+  Serial.begin(115200);
+  Serial.println("DHTxx test!");
+  dht.begin();
+  attachInterrupt(digitalPinToInterrupt(17),H,FALLING);
+  attachInterrupt(digitalPinToInterrupt(27),M, FALLING);
+}
+void loop() {
+ 
+  Serial.println(Ha+mid); 
+  delay(1000);
+int t = dht.readTemperature();
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print(" \n");  
+  if(t==(Ha+mid)){
+  digitalWrite(33,1);  
+  }
+  if(t==(Ha-mid)){
+  digitalWrite(33,1);  
+  }
+  if(mid>30){
+  mid=25;
+  delay(1000);
+}
+if(Ha>4){
+  Ha=1;
+  delay(1000);
+}
+}
+void M(){
+mid=mid+1;
+delay(100);
+Serial.println(mid);
+ 
+}
+void H(){
+Ha=Ha+1;  
+delay(100);
+Serial.println(Ha);
+}
+
+#include <SPI.h>
+#include <RFID.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define SCREEN_WIDTH 128 
+#define SCREEN_HEIGHT 64
+#define SS_PIN 33
+#define RST_PIN 32
+bool sw = 1;
+#define OLED_RESET -1 //?? reset ???? -1 ??????????????? Arduino reset
+Adafruit_SSD1306 OLED(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+RFID rfid(SS_PIN, RST_PIN); 
+
+// Setup variables:
+    int serNum0 ;
+    int serNum1 ;
+    int serNum2 ;
+    int serNum3 ;
+    int serNum4 ;
+    
+    int serNum5 = 121;
+    int serNum6 = 210;
+    int serNum7 = 247;
+    int serNum8 = 151;
+    int serNum9 = 203;
+//    char pass0 = ;
+ // char pass1 = 'Dec: 121, 210, 247, 151, 203';
+ 
+void setup()
+{ 
+  Serial.begin(115200);
+OLED.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  SPI.begin(); 
+  OLED.clearDisplay();
+
+rfid.init();
+
+}
+void loop()
+{
+
+    if (rfid.isCard()) {
+        if (rfid.readCardSerial()) {
+            if (rfid.serNum[0] != serNum0
+                && rfid.serNum[1] != serNum1
+                && rfid.serNum[2] != serNum2
+                && rfid.serNum[3] != serNum3
+                && rfid.serNum[4] != serNum4
+            ) {
+                /* With a new cardnumber, show it. */
+                Serial.println(" ");
+                //Serial.println("Card found");
+                serNum0 = rfid.serNum[0];
+                serNum1 = rfid.serNum[1];
+                serNum2 = rfid.serNum[2];
+                serNum3 = rfid.serNum[3];
+                serNum4 = rfid.serNum[4];
+
+
+    
+                //Serial.println(" ");
+               // Serial.println("Cardnumber:");
+               
+ 
+                Serial.print("HEX: ");
+    Serial.print(rfid.serNum[0],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[1],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[2],HEX);
+               Serial.print(", ");
+    Serial.print(rfid.serNum[3],HEX);
+                Serial.print(", ");
+    Serial.print(rfid.serNum[4],HEX);
+                Serial.println(" ");
+
+
+                
+//Serial.setCursor(0, 20);    
+//Serial.setTextSize(2);                     
+      
+             
+            }
+          }
+          
+    }
+   
+ OLED.setTextColor(WHITE, BLACK);
+ OLED.setCursor(0, 0);
+ OLED.setTextSize(1); 
+ OLED.print("password");
+  OLED.setCursor(0, 20);
+ OLED.setTextSize(1);
+OLED.print(serNum0);
+OLED.print(".");
+OLED.print(serNum1);
+OLED.print(".");
+OLED.print(serNum2);
+OLED.print(".");
+OLED.print(serNum3);
+OLED.print(".");
+OLED.print(serNum4);
+OLED.println(" ");
+OLED.display();
+    rfid.halt();
+
+OLED.display();
+
+ 
+  if(  serNum5 == serNum0
+    && serNum6 == serNum1
+    && serNum7== serNum2
+    && serNum8== serNum3
+    && serNum9== serNum4){
+   OLED.setCursor(10, 40);
+ OLED.setTextSize(1);                 
+OLED.println("     Good");
+Serial.println(" good ");
+serNum0=0;
+      
+    }else{
+        OLED.setCursor(10, 40);
+ OLED.setTextSize(1);
+      OLED.println(" not Good");
+      Serial.println("no good ");
+      
+    }
+   
+ 
+            }
