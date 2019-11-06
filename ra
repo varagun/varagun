@@ -1,0 +1,103 @@
+
+int s=0;
+int delaytime = 1000;
+void setup() {
+pinMode(33,OUTPUT);
+pinMode(32,OUTPUT);
+pinMode(25,OUTPUT);
+pinMode(26,OUTPUT);
+pinMode(27,INPUT_PULLUP);
+pinMode(17,INPUT_PULLUP);
+attachInterrupt(digitalPinToInterrupt(17),delayt,FALLING);
+attachInterrupt(digitalPinToInterrupt(27),u, FALLING);
+
+Serial.begin(115200);
+}
+
+void loop() {
+Serial.println(s);
+if(digitalRead(27)==1&& s==0 ){
+  delay(50);
+  up();
+}
+if(digitalRead(27)==0&& s==0 ){
+  delay(50);
+  rong();
+s=1;
+
+}
+
+if(digitalRead(27)==1&& s==1 ){
+  delay(50);
+  rong();
+}
+
+if(digitalRead(27)==0&& s==1 ){
+  delay(50);
+  up();
+  s=0;
+}
+
+
+if(delaytime<0){
+  delaytime=1000;
+  delay(100);
+}
+
+}
+
+void delayt(){
+ delaytime = delaytime-70;
+ delay(100);
+ Serial.println(delaytime);
+  }
+void u(){
+  
+s=1;
+delay(100);
+s=0;
+}
+
+
+
+void up(){
+digitalWrite(26,HIGH);
+delay(delaytime);
+digitalWrite(26,LOW);
+delay(delaytime);
+digitalWrite(25,HIGH);
+delay(delaytime);
+digitalWrite(25,LOW);
+delay(delaytime);
+digitalWrite(33,HIGH);
+delay(delaytime);
+digitalWrite(33,LOW);
+delay(delaytime);
+digitalWrite(32,HIGH);
+delay(delaytime);
+digitalWrite(32,LOW);
+delay(delaytime);
+ 
+ }
+
+void rong(){
+digitalWrite(32,HIGH);
+delay(delaytime);
+digitalWrite(32,LOW);
+delay(delaytime);
+digitalWrite(33,HIGH);
+delay(delaytime);
+digitalWrite(33,LOW);
+delay(delaytime);
+digitalWrite(25,HIGH);
+delay(delaytime);
+digitalWrite(25,LOW);
+delay(delaytime);
+digitalWrite(26,HIGH);
+delay(delaytime);
+digitalWrite(26,LOW);
+delay(delaytime);
+}
+
+
+
