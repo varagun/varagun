@@ -1,0 +1,51 @@
+#include "DHT.h"
+#define DHTPIN 32    
+#define DHTTYPE DHT11   
+DHT dht(DHTPIN, DHTTYPE);
+int mid=25 ;
+int Ha=1;
+void setup() {
+  pinMode(33,OUTPUT);
+  pinMode(27,INPUT_PULLUP);
+  pinMode(17,INPUT_PULLUP);
+  Serial.begin(115200);
+  Serial.println("DHTxx test!");
+  dht.begin();
+  attachInterrupt(digitalPinToInterrupt(17),H,FALLING);
+  attachInterrupt(digitalPinToInterrupt(27),M, FALLING);
+}
+void loop() {
+ 
+  Serial.println(Ha+mid); 
+  delay(1000);
+int t = dht.readTemperature();
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print(" \n");  
+  if(t==(Ha+mid)){
+  digitalWrite(33,1);  
+  }
+  if(t==(Ha-mid)){
+  digitalWrite(33,1);  
+  }
+  if(mid>30){
+  mid=25;
+  delay(1000);
+}
+if(Ha>4){
+  Ha=1;
+  delay(1000);
+}
+}
+void M(){
+mid=mid+1;
+delay(100);
+Serial.println(mid);
+ 
+}
+void H(){
+Ha=Ha+1;  
+delay(100);
+Serial.println(Ha);
+}
